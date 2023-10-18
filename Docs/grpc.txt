@@ -1,0 +1,23 @@
+# gRPC documentation of your endpoint and how to make a sample request 
+## 1. Option: run the writer.py
+1. Go to modules/producer-locations-grpc/app
+2. Start the gRPC Server: ```python main.py ```
+3. Run the sample writer: ```python writer.py```
+
+## 2. Option: Use Postman App
+### Create and send a gRPC Request
+1. Under "new", create a gRPC Request
+2. Under Service definition upload the location.proto from modules/producer-locations-grpc/app
+3. Use localhost:30002 as Server address
+4. Choose LocationService/Create as a method
+5. Create a sample Message, for example: ```{
+    "person_id": 2,
+    "longitude": "-122.290883",
+    "latitude": "37.55363",
+    "creation_time": "2020-07-07"
+}```
+6. Invoke Message
+
+
+### Tip 
+Create a new Person using the RESTful API first, then retrieve all Person to get the new Person's ID. Use this person_id to create new locations via the gRPC request and check the new connections inside the frontend app.

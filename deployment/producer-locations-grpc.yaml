@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: producer-locations-grpc
+  name: producer-locations-grpc
+spec:
+  ports:
+  - name: "5005"
+    port: 5005
+    targetPort: 5005
+    nodePort: 30002
+  selector:
+    service: producer-locations-grpc
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    service: producer-locations-grpc
+  name: producer-locations-grpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: producer-locations-grpc
+  template:
+    metadata:
+      labels:
+        service: producer-locations-grpc
+    spec:
+      containers:
+      - image: omstrat/producer-locations-grpc:latest
+        name: producer-locations-grpc
+        imagePullPolicy: Always
+        env:
+        - name: KAFKA_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-env
+              key: KAFKA_SERVER
+        - name: KAFKA_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: kafka-env
+              key: KAFKA_TOPIC
+      restartPolicy: Always

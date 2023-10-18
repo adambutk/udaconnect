@@ -1,0 +1,249 @@
+openapi: 3.0.0
+info:
+  description: Api to help attendees of conferences and conventions make connections
+  version: "1.0.0"
+  title: API Udaconnect Project
+servers:
+- url: http://localhost:30001/
+  description: REST API
+paths:
+  /api/locations:
+    post:
+      summary: Adds a new Location to the DB
+      operationId: addLocation
+      description: Creates a new Location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationCreate'
+      responses:
+        '201':
+          description: Location successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '400':
+          description: 'Invalid input, object invalid'
+  
+  /api/locations/{location_id}:
+    get:
+      summary: Get a Location from the DB by ID
+      operationId: getLocation
+      description: Retrieves a Location by ID
+      parameters:
+      - name: location_id
+        in: path
+        description: ID of the Location to get
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Location data successfully retrieved
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Location'
+        '400':
+          description: 'Invalid input, object invalid'
+  
+  /api/persons:
+    get:
+      summary: Get all Persons
+      operationId: getPersonAll
+      description: Retrieves all persons from DB
+      responses:
+        '200':
+          description: All persons successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+        '400':
+          description: Bad input parameter
+    post:
+      summary: Adds a new Person to the DB
+      operationId: addPerson
+      description: Creates a new Person
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonCreate'
+      responses:
+        '201':
+          description: Person successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+        '400':
+          description: 'Invalid input, object invalid'
+          
+  /api/persons/{person_id}:
+    get:
+      summary: Get a Person from the DB by ID
+      operationId: getPerson
+      description: Retrieves a Person by ID
+      parameters:
+      - name: person_id
+        in: path
+        description: ID of the Person to get
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Person data successfully retrieved
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Person'
+        '400':
+          description: 'Invalid input, object invalid'
+          
+  /api/persons/{person_id}/connection:
+    get:
+      summary: Find Connections between Persons
+      operationId: findContacts
+      description: Proximity to a given user in meters
+      parameters:
+      - name: person_id
+        in: path
+        description: ID of the Person to get
+        required: true
+        schema:
+          type: integer
+      - name: start_date
+        in: query
+        description: Lower bound of date range
+        required: true
+        schema:
+          type: string
+          format: date-time
+          example: "2023-10-15 06:26:49"
+      - name: end_date
+        in: query
+        description: Upper bound of date range
+        required: true
+        schema:
+          type: string
+          format: date-time
+          example: "2023-10-15 07:26:49"
+      - name: distance
+        in: query
+        description: Proximity to a given person in meters
+        required: true
+        schema:
+          type: integer
+          example: 5
+      responses:
+        '200':
+          description: Connection data successfully retrieved
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connection'
+        '400':
+          description: 'Invalid input, object invalid'
+          
+components:
+  schemas:
+    Location:
+      type: object
+      required:
+        - id
+        - person_id
+        - longitude
+        - latitude
+        - creation_time
+      properties:
+        id:
+          type: integer
+          example: 7
+        person_id:
+          type: integer
+          example: 3
+        longitude:
+          type: string
+          example: "34.77946"
+        latitude:
+          type: string
+          example: "32.40343"
+        creation_time:
+         type: string
+         format: date-time
+         example: "2023-10-15 08:26:49"
+    LocationCreate:
+      type: object
+      required:
+        - person_id
+        - longitude
+        - latitude
+        - creation_time
+      properties:
+        person_id:
+          type: integer
+          example: 3
+        longitude:
+          type: string
+          example: "34.77946"
+        latitude:
+          type: string
+          example: "32.40343"
+        creation_time:
+         type: string
+         format: date-time
+         example: "2023-10-15 08:26:49"
+         
+    Person:
+      type: object
+      required:
+        - id
+        - first_name
+        - last_name
+        - company_name
+      properties:
+        id:
+          type: string
+          example: "1"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        company_name:
+          type: string
+          example: "JD Services ltd."
+    PersonCreate:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - company_name
+      properties:
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        company_name:
+          type: string
+          example: "JD Services ltd."
+    
+    Connection:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/Location'
+        person:
+          $ref: '#/components/schemas/Person'
+        

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+// Location message definition
+message Location {
+  // ID of the person sending the location
+  int32 person_id = 1;
+  // Longitude and latitude of the location
+  string longitude = 2;
+  string latitude = 3;
+  // Creation/Submission time of the location on the client side (reduce db server load)
+  string creation_time = 4;
+}
+
+// Location service definition
+service LocationService {
+  // Creates a new location and returns the new location ID
+  rpc Create(Location) returns (Location);
+}

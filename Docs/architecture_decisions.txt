@@ -1,0 +1,15 @@
+# 3. Justify Your Decisions
+## Idea
+The task is to enhance the POC application into a Minimum Viable Product (MVP) to handle the large volume of Location data that will be ingested. 
+Knowing this and reviewing the code, I anticipate that the create function inside the Location service will have to take a high volume of constantly submitted Location data from all registered persons. As the Location information continually "updates," I guess it will be sent by external devices like mobile phones or sensors. These circumstances make the Location Service an excellent candidate to refactor and decouple it from the Restful API into a microservice.
+
+## RESTful API for the Person/Connection Services (used by the Frontend App)
+The Person and Connection Services inside the Udaconnect Flask Api used by the Frontend App can remain as they are, as the RESTful API is sophisticated enough to handle single-initiated API requests by a few users, at least during the MVP phase. I will also leave the Location Service untouched, as it can still be helpful for testing or until all devices switch to the new Location microservice/message passing technique.
+
+## gRPC for the Location Service (used by external devises)
+As stated, the bottleneck will likely be to create new locations connected to persons. Therefore, I want to use gRPC as the main message-passing technique for incoming Location requests. GRPC is fast because it leverages HTTP/2, transports binary data, and uses protocol buffers for efficiently transporting structured data.
+
+## Kafka Message Queue
+Further, and more importantly, using a message queue like Kafka will be beneficial for the Location Service. This way, the MVP can process incoming Locations in batches and avoid losing them during downtime. Also, the performance will increase because queues allow us to process following requests instead of idly waiting for a response from the server.
+
+
